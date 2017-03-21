@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+        <record model="ir.ui.view" id="form_res_partner_addnd_ejemplo">
+            <field name="name">res.partner.addendas</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+            <field name="priority">50</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="user_id" position="before" >
+                   <field name="requiere_addenda" />
+                   <field name="no_proveedor" attrs="{'invisible':[('requiere_addenda','!=',True)],'required':[('requiere_addenda','=',True)]}"/>
+                </field>
+            </field>
+        </record>
+
+
+</data>
+</openerp>

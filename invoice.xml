@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+        <record id="view_invoice_form_inherit_attachment_addndas" model="ir.ui.view">
+            <field name="name">account.invoice.form.femsa.addndas</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="date_due" position="after">
+                    <field name="requiere_addenda" readonly="1"/>
+                 </field>
+            </field>
+        </record>
+
+
+
+</data>
+</openerp>
