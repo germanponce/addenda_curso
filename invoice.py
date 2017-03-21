@@ -88,12 +88,54 @@ class account_invoice(models.Model):
         factura.setAttribute('serie', serie)
         factura.setAttribute('folio', self.number)
         factura.setAttribute('noproveedor', self.partner_id.no_proveedor)
+        factura.setAttribute('totalfacturacion', str("{0:.4f}".format(self.amount_total)))
 
         if not orden_compra:
             raise UserError(_("Error\nLa factura debe provenir de un Pedido de Venta."))
         factura.setAttribute('ordencompra', orden_compra)
 
         addenda.appendChild(factura)
+
+        moneda = dom.createElement('moneda')
+        moneda_name = self.currency_id.name
+        moneda.setAttribute('tipomoneda',moneda_name)
+
+        self.env.cr.execute("""SELECT rate2 FROM res_currency_rate 
+                           WHERE currency_id = %s
+                             AND name <= %s
+                             AND (company_id is null
+                                 OR company_id = %s)
+                        ORDER BY company_id, name desc LIMIT 1""",
+                       (self.currency_id.id, self.date_invoice, self.company_id.id))
+        if self.env.cr.rowcount:
+            tc = self.env.cr.fetchone()[0]
+        else:
+            tc = 1
+
+        moneda.setAttribute('tasacambio',str("{0:.4f}".format(tc)))
+
+        addenda.appendChild(moneda)
+
+        proveedor = dom.createElement('proveedor')
+
+        proveedor.setAttribute('codigo',str(self.partner_id.no_proveedor))
+        proveedor.setAttribute('nombre',str(self.company_id.name))
+
+        addenda.appendChild(proveedor)
+
+        detalle = dom.createElement('detallecompra')
+
+        for line in self.invoice_line_ids:
+            linea_detalle = dom.createElement('linea')
+            linea_detalle.setAttribute('referencia', str(line.name))
+            linea_detalle.setAttribute('cantidad', str("{0:.4f}".format(line.quantity)))
+            linea_detalle.setAttribute('unidadmedida', str(line.uom_id.name))
+            linea_detalle.setAttribute('preciounitario', str("{0:.4f}".format(line.price_unit)))
+            linea_detalle.setAttribute('total', str("{0:.4f}".format(line.price_subtotal)))
+
+            detalle.appendChild(linea_detalle)
+
+        addenda.appendChild(detalle)
 
 
         data_xml = base64.encodestring(root.toxml('UTF-8'))

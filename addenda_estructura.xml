@@ -1,0 +1,19 @@
+<cfdi:Addenda>
+
+<factura serie="" folio="" fechafactura="" noproveedor="" ordencompra="" totalfacturacion="">
+
+   <moneda tipomoneda="USD" tasacambio="16.8454"/>
+
+    <proveedor codigo="" nombre=""/>
+
+     <detallecompra>
+
+          <linea referencia="" cantidad="" unidadmedida="" preciounitario="" total="">
+
+           </linea>
+
+    </detallecompra>
+
+</factura>
+
+</cfdi:Addenda>
